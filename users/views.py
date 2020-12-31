@@ -10,38 +10,10 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 def dashboard(request):
-    # weblist = pd.read_csv('data/weblist.csv') 
-    # dataset filename
-#     # datasetfilename = "data/eyeonwebdataset.csv"
-#     df = pd.read_csv("data/eyeonwebdataset.csv")
-    
-#     # fig = px.scatter(df, x="WebAddress", y="ResponseTime", color="StatusCode",hover_data=['StatusCode'],title='Web Status Response Time')
-#     # fig.show()
-
-#     return render(request, 'plotly.html', context={'plot_div':plot_div})
-
-# class PlotlyChartView(TemplateView):
-#     def get(self, request, *args, **kwargs):
-#         x_data="WebAddress"
-#         y_data="ResponseTime"
-#         plot_div = plot([go.Scatter(
-#             x=x_data,
-#             y=y_data,
-#             color="StatusCode",
-#             name='Web Status Response Time',
-#             opacity=0.8,
-#             hover_data=['StatusCode']
-#         )], output_type='div')
-
-#         return render(request, 'plotly.html', context={'plot_div':plot_div})
-    
-# def index(request):
-    # df = pd.read_csv(r'data/eyeonwebdataset.csv')
     df = pd.read_csv("users/data/eyeonwebdataset.csv")
     rs = df.groupby("WebAddress")["ResponseTime"].agg('sum')
     categories = list(rs.index)
     values = list(rs.values)
-    x = 1
     table_content = df.to_html(index=None)
     table_content = table_content.replace("","")
     table_content = table_content.replace('class="dataframe"',"class='table table-striped'")
@@ -49,8 +21,6 @@ def dashboard(request):
     
     context = {"categories": categories, 'values': values, 'table_data':table_content}
     return render(request, 'users/dashboard.html', context=context)
-
-    # return render(request, "users/dashboard.html",{"x":x})
 
 def register(request):
     if request.method == "GET":
@@ -64,3 +34,46 @@ def register(request):
             user = form.save()
             login(request, user)
             return redirect(reverse("dashboard"))
+
+def datascrap(request):
+    weblist = pd.read_csv('users/data/weblist.csv') 
+    datasetfilename = MEDIA_ROOT+ "users/data/eyeonwebdataset.csv"
+    df = pd.read_csv(datasetfilename)
+    
+    #function to access the Web and ask for status
+    def writetocsv(filename):
+        start_time = time.time()
+        df = pd.DataFrame(columns = ['WebAddress', 'AccessTime', 'Status','ResponseTime']) 
+        for web in weblist.index:
+            try:
+                page = requests.get(weblist['WebList'][web])
+            except requests.exceptions.ConnectionError:
+                page.status_code = "400"
+            new_row = {'WebAddress': str(weblist['WebList'][web]) , 'AccessTime': str(datetime.now()) , 'Status': str(page.status_code), 'ResponseTime':time.time() - start_time}
+            df = df.append(new_row, ignore_index=True)
+
+    #program that call write to csv every 5 minutes
+    import sched, time
+    s = sched.scheduler(time.time, time.sleep)
+    def do_something(sc): 
+        print("Doing stuff...")
+        writetocsv(datasetfilename)
+        s.enter(300, 1, do_something, (sc,))
+
+    s.enter(300, 1, do_something, (s,))
+    s.run()           
+    df.to_csv(filename, mode='a', header=False)
+
+
+    return render(request, 'plotly.html', context={'plot_div':plot_div})
+
+def datagraph(request):
+    datasetfilename = "users/data/eyeonwebdataset.csv"
+    df = pd.read_csv(datasetfilename)
+    x_data="WebAddress"
+    y_data="ResponseTime"
+    plot_div=px.scatter(df, x_data, y_data, color="StatusCode",hover_data=['StatusCode'],title='Web Status Response Time')
+    plot_div.show()
+
+    return render(request, 'users/plotly.html', context ={'plot_div': plot_div,"df":df,"x_data":x_data,"y_data":y_data})
+

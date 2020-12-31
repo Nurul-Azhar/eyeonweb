@@ -5,5 +5,6 @@ from eyeonwebs.settings import DEBUG, STATIC_URL, STATIC_DIR, MEDIA_DIR, MEDIA_U
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('datagraph/',views.datagraph, name='datagraph'),
+    path('datascrap/',views.datagraph, name='datascrap'),
+    # path('datagraph/',views.datagraph, name='datagraph'),
 ]

@@ -5,7 +5,11 @@ from django.http import HttpResponse
 from django.conf.urls.static import static
 from django.views.generic import TemplateView, View 
 
-
+import pandas as pd
+import plotly
+import plotly.express as px
+import plotly.graph_objects as go
+from plotly.offline import plot
 
 # Create your views here.
 def index(request):
@@ -23,21 +27,46 @@ def index(request):
     context = {"categories": categories, 'values': values, 'table_data':table_content,"x":x}
     return render(request, 'users/dashboard.html', context=context)
 
-def datagraph(request):
-    import pandas as pd
-    import plotly
-    import plotly.express as px
-    import plotly.graph_objects as go
-
-    # weblist = pd.read_csv('data/weblist.csv') 
-    # dataset filename
-    # datasetfilename = "data/eyeonwebdataset.csv"
-    # df = pd.read_csv(datasetfilename)
+def datascrap(request):
+    weblist = pd.read_csv('users/data/weblist.csv') 
+    datasetfilename = MEDIA_ROOT+ "users/data/eyeonwebdataset.csv"
+    df = pd.read_csv(datasetfilename)
     
-    # fig = px.scatter(df, x="WebAddress", y="ResponseTime", color="StatusCode",hover_data=['StatusCode'],title='Web Status Response Time')
-    # fig.show()
+    #function to access the Web and ask for status
+    def writetocsv(filename):
+        start_time = time.time()
+        df = pd.DataFrame(columns = ['WebAddress', 'AccessTime', 'Status','ResponseTime']) 
+        for web in weblist.index:
+            try:
+                page = requests.get(weblist['WebList'][web])
+            except requests.exceptions.ConnectionError:
+                page.status_code = "400"
+            new_row = {'WebAddress': str(weblist['WebList'][web]) , 'AccessTime': str(datetime.now()) , 'Status': str(page.status_code), 'ResponseTime':time.time() - start_time}
+            df = df.append(new_row, ignore_index=True)
 
-    # return render(request, 'plotly.html', context={'plot_div':plot_div})
+    #program that call write to csv every 5 minutes
+    import sched, time
+    s = sched.scheduler(time.time, time.sleep)
+    def do_something(sc): 
+        writetocsv(datasetfilename)
+        s.enter(300, 1, do_something, (sc,))
+
+    s.enter(300, 1, do_something, (s,))
+    s.run()           
+    df.to_csv(filename, mode='a', header=False)
+
+    return render(request, 'plotly.html', context={'plot_div':plot_div})
+
+def datagraph(request):
+    datasetfilename = "data/eyeonwebdataset.csv"
+    df = pd.read_csv(datasetfilename)
+    x_data="WebAddress"
+    y_data="ResponseTime"
+    plot_div=px.scatter(df, x_data, y_data, color="StatusCode",hover_data=['StatusCode'],title='Web Status Response Time')
+    plot_div
+
+    return render(request, 'users/plotly.html', context ={'plot_div': plot_div,"df":df,"x_data":x_data,"y_data":y_data})
+
 
 class PlotlyChartView(TemplateView):
     def get(self, request, *args, **kwargs):
