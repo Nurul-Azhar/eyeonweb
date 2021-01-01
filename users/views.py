@@ -8,7 +8,7 @@ import pandas as pd
 import plotly
 import plotly.express as px
 import plotly.graph_objects as go
-
+from plotly.offline import plot
 def dashboard(request):
     df = pd.read_csv("users/data/eyeonwebdataset.csv")
     rs = df.groupby("WebAddress")["ResponseTime"].agg('sum')
@@ -72,8 +72,18 @@ def datagraph(request):
     df = pd.read_csv(datasetfilename)
     x_data="WebAddress"
     y_data="ResponseTime"
-    plot_div=px.scatter(df, x_data, y_data, color="StatusCode",hover_data=['StatusCode'],title='Web Status Response Time')
-    plot_div.show()
+    plot_div=plot(px.scatter(df, x_data, y_data, color="StatusCode",hover_data=['StatusCode'],title='Web Status Response Time'), output_type='div')
+    plot_div
 
     return render(request, 'users/plotly.html', context ={'plot_div': plot_div,"df":df,"x_data":x_data,"y_data":y_data})
 
+
+def datagraph_date(request):
+    datasetfilename = "users/data/eyeonwebdataset.csv"
+    df = pd.read_csv(datasetfilename)
+    x_data="AccessTime"
+    y_data="ResponseTime"
+    plot_div_date = plot(px.line(df, x_data, y_data, color='WebAddress',hover_data=['StatusCode'],title='Web Monitor Access Time'), output_type='div')
+    plot_div_date
+
+    return render(request, 'users/plotly.html', context ={'plot_div_date': plot_div_date,"df":df,"x_data":x_data,"y_data":y_data})

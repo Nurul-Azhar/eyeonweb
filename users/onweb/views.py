@@ -62,23 +62,22 @@ def datagraph(request):
     df = pd.read_csv(datasetfilename)
     x_data="WebAddress"
     y_data="ResponseTime"
-    plot_div=px.scatter(df, x_data, y_data, color="StatusCode",hover_data=['StatusCode'],title='Web Status Response Time')
+    plot_div=plot([px.scatter(df, x_data, y_data, color="StatusCode",hover_data=['StatusCode'],title='Web Status Response Time')], output_type='div')
     plot_div
 
     return render(request, 'users/plotly.html', context ={'plot_div': plot_div,"df":df,"x_data":x_data,"y_data":y_data})
 
-
 class PlotlyChartView(TemplateView):
     def get(self, request, *args, **kwargs):
-        x_data="WebAddress"
-        y_data="ResponseTime"
-        plot_div = plot([go.Scatter(
-            x=x_data,
-            y=y_data,
+        x_data=df["WebAddress"]
+        y_data=df["ResponseTime"]
+        plot_div = plot([px.scatter(
+            x=x_data, 
+            y=y_data, 
             color="StatusCode",
-            name='Web Status Response Time',
-            opacity=0.8,
-            hover_data=['StatusCode']
-        )], output_type='div')
+            hover_data=df['StatusCode'],
+            title='Web Status Response Time'
+            )], output_type='div')
+        plot_div.show()
 
         return render(request, 'plotly.html', context={'plot_div':plot_div})

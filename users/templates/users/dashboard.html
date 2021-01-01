@@ -57,7 +57,14 @@
             <li class="nav-item">
               <a class="nav-link" href={% url 'datagraph' %}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bar-chart-2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-                Plot Graph
+                Plot Graph I
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href={% url 'datagraph_date' %}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bar-chart-2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                Plot Graph II
               </a>
             </li>
           </ul>
@@ -136,8 +143,8 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
 {% else %}
     <center>
-    <div class="alert alert-danger" role="alert">
-    <h2>Please login to enable viewing data/graph</h2>
+    <div>
+    </br></br></br></br></br></br></br></br></br><h2>Please login to enable viewing data/graph</h2>
     </div>
     </center> 
 {% endif %}

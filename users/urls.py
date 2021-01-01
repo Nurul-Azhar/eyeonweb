@@ -16,7 +16,7 @@ Including another URLconf
 # from django.contrib import admin
 # from django.urls import path
 from django.conf.urls import include, url
-from users.views import dashboard, register, datagraph
+from users.views import dashboard, register, datagraph, datagraph_date
 from django.urls import path
 from . import views
 
@@ -25,5 +25,6 @@ urlpatterns = [
     url(r"^dashboard/", dashboard, name="dashboard"),
     url(r"^register/", register, name="register"),
     url(r"^datagraph/", datagraph, name="datagraph"),
+    url(r"^datagraph_date/", datagraph_date, name="datagraph_date"),
     
 ]
