@@ -81,3 +81,4 @@ class PlotlyChartView(TemplateView):
         plot_div.show()
 
         return render(request, 'plotly.html', context={'plot_div':plot_div})
+

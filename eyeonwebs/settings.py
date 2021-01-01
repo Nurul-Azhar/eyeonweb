@@ -17,8 +17,9 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATE_DIR = os.path.join(BASE_DIR,'templates')
 STATIC_DIR = os.path.join(BASE_DIR,'static')
-MEDIA_DIR = os.path.join(BASE_DIR,'media')
+MEDIA_DIR = os.path.join(BASE_DIR,'users/data')
 SETTINGS_PATH = os.path.dirname(os.path.dirname(__file__))
+MEDIA_ROOT  = os.path.join(BASE_DIR, 'users/data')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
@@ -131,8 +132,8 @@ STATIC_ROOT = STATIC_DIR
 STATIC_URL = '/static/'
 # STATICFILES_DIRS = [STATIC_DIR,]
 MEDIA_ROOT = MEDIA_DIR
-MEDIA_URL = '/media/'
-
+# MEDIA_URL = '/media/'
+MEDIA_URL = '/users/data/'
 
 
 # redirect to dashboard by reuse the dashboard view

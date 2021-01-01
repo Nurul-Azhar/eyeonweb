@@ -42,7 +42,7 @@
     
     <div class="container-fluid">
       <div class="row">
-
+      {{ download_file }}
       <!-- Left Pane -->
       <nav class="col-md-2 d-none d-md-block bg-light sidebar">
         <div class="sidebar-sticky">
@@ -144,7 +144,9 @@
 {% else %}
     <center>
     <div>
+    {% comment %} users/data/User Manual.pdf {% endcomment %}
     </br></br></br></br></br></br></br></br></br><h2>Please login to enable viewing data/graph</h2>
+    </br></br></br></br></br></br><a  href="../users/data/UserManual.pdf" download> User Manual Guide </a>
     </div>
     </center> 
 {% endif %}

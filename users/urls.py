@@ -19,6 +19,9 @@ from django.conf.urls import include, url
 from users.views import dashboard, register, datagraph, datagraph_date
 from django.urls import path
 from . import views
+from eyeonwebs.settings import DEBUG, STATIC_URL, STATIC_DIR, MEDIA_DIR, MEDIA_URL,MEDIA_ROOT
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     url(r"^accounts/", include("django.contrib.auth.urls")),
@@ -27,4 +30,5 @@ urlpatterns = [
     url(r"^datagraph/", datagraph, name="datagraph"),
     url(r"^datagraph_date/", datagraph_date, name="datagraph_date"),
     
-]
+ ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

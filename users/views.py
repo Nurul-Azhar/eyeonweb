@@ -51,19 +51,8 @@ def datascrap(request):
                 page.status_code = "400"
             new_row = {'WebAddress': str(weblist['WebList'][web]) , 'AccessTime': str(datetime.now()) , 'Status': str(page.status_code), 'ResponseTime':time.time() - start_time}
             df = df.append(new_row, ignore_index=True)
-
-    #program that call write to csv every 5 minutes
-    import sched, time
-    s = sched.scheduler(time.time, time.sleep)
-    def do_something(sc): 
-        print("Doing stuff...")
-        writetocsv(datasetfilename)
-        s.enter(300, 1, do_something, (sc,))
-
-    s.enter(300, 1, do_something, (s,))
-    s.run()           
-    df.to_csv(filename, mode='a', header=False)
-
+    
+    writetocsv(datasetfilename)
 
     return render(request, 'plotly.html', context={'plot_div':plot_div})
 
@@ -87,3 +76,25 @@ def datagraph_date(request):
     plot_div_date
 
     return render(request, 'users/plotly.html', context ={'plot_div_date': plot_div_date,"df":df,"x_data":x_data,"y_data":y_data})
+
+
+
+def download_file(request):
+    import mimetypes
+    # fill these variables with real values
+    fl_path = 'users/data'
+    filename = 'UserManual.pdf'
+
+    fl = open(fl_path, 'r')
+    mime_type, _ = mimetypes.guess_type(fl_path)
+    response = HttpResponse(fl, content_type=mime_type)
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
+    
+    return response
+
+    # from django.views.static import serve 
+    # filepath = 'users/data/User Manual.pdf' 
+    # return serve(request, os.path.basename(filepath),os.path.dirname(filepath))
+
+    # x ='test'
+    # return render(request,'users/dashboard.html',context={"x":x})

@@ -7,4 +7,5 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('datascrap/',views.datagraph, name='datascrap'),
     # path('datagraph/',views.datagraph, name='datagraph'),
+    # path('<str:filepath>/', views.download_file,name = 'download_file')
 ]
